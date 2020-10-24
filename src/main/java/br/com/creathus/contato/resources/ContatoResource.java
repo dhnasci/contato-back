@@ -1,28 +1,34 @@
 package br.com.creathus.contato.resources;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.creathus.contato.domain.Contato;
-import br.com.creathus.contato.domain.enums.Sexo;
+import br.com.creathus.contato.services.ContatoService;
 
 @RestController
 @RequestMapping("/contatos")
 public class ContatoResource {
 	
-	@RequestMapping(method=RequestMethod.GET)
-	public List<Contato> listar(){	
-		List<Contato> lista = new ArrayList();
-		Contato cont1 = new Contato(1,"Ronaldo Silva", Sexo.MASCULINO, "3234-3344", "ronaldo@gmail.com");
-		Contato cont2 = new Contato(2, "Sonia Pereira", Sexo.FEMININO, "3234-2233", "sonia@cret.com.br");
-		
-		lista.add(cont1);
-		lista.add(cont2);
-		return lista;
+	@Autowired
+	private ContatoService service;
+	
+	@RequestMapping(value="/{id}",method=RequestMethod.GET)
+	public ResponseEntity<?> find(@PathVariable Integer id){
+		Contato obj = service.find(id);
+		return ResponseEntity.ok().body(obj);
 	}
-
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<?> list(){
+		List<Contato> lista = service.findAll();
+		return ResponseEntity.ok().body(lista);
+	}
+	
 }
