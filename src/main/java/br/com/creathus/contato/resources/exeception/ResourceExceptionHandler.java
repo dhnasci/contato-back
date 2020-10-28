@@ -7,7 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import br.com.creathus.contato.services.exceptions.DataIntegrityException;
-import javassist.tools.rmi.ObjectNotFoundException;
+import br.com.creathus.contato.services.exceptions.RejectException;
+import br.com.creathus.contato.services.exceptions.ObjectNotFoundException;
 
 @ControllerAdvice
 public class ResourceExceptionHandler {
@@ -21,6 +22,11 @@ public class ResourceExceptionHandler {
 	public ResponseEntity<StandardError> dataIntegrity(DataIntegrityException e, HttpServletRequest request){
 		StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
+	
+	public ResponseEntity<StandardError> rejection(RejectException e, HttpServletRequest request){
+		StandardError err = new StandardError(HttpStatus.METHOD_NOT_ALLOWED.value(), e.getMessage(), System.currentTimeMillis());
+		return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(err);
 	}
 
 }

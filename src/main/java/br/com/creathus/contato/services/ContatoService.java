@@ -10,6 +10,7 @@ import br.com.creathus.contato.domain.Contato;
 import br.com.creathus.contato.repositories.ContatoRepository;
 import br.com.creathus.contato.services.exceptions.DataIntegrityException;
 import br.com.creathus.contato.services.exceptions.ObjectNotFoundException;
+import br.com.creathus.contato.services.exceptions.RejectException;
 
 @Service
 public class ContatoService {
@@ -28,7 +29,14 @@ public class ContatoService {
 	
 	public Contato insert(Contato obj) {
 		obj.setId(null);
-		return repo.save(obj);
+		Contato addObj = new Contato();
+		try {
+			addObj = repo.save(obj);
+		} catch (RejectException e) {
+			// TODO: handle exception
+			throw new RejectException("Adição de contato rejeitada! ", e);
+		}
+		return addObj;
 	}
 	
 	public Contato update(Contato obj) {
@@ -45,7 +53,7 @@ public class ContatoService {
 			
 		} catch (DataIntegrityException e) {
 			// TODO: handle exception
-			throw new DataIntegrityException("Não é possível excluir o Contato por integridade referencial");
+			throw new DataIntegrityException("Não é possível excluir o Contato por integridade referencial", e);
 		}
 		
 	}
