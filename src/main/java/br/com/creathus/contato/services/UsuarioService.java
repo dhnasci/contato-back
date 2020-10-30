@@ -4,43 +4,47 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.creathus.contato.domain.Contato;
-import br.com.creathus.contato.dto.ContatoDTO;
-import br.com.creathus.contato.repositories.ContatoRepository;
+import br.com.creathus.contato.domain.Usuario;
+import br.com.creathus.contato.dto.UsuarioDTO;
+import br.com.creathus.contato.repositories.UsuarioRepository;
 import br.com.creathus.contato.services.exceptions.DataIntegrityException;
 import br.com.creathus.contato.services.exceptions.ObjectNotFoundException;
 import br.com.creathus.contato.services.exceptions.RejectException;
 
 @Service
-public class ContatoService {
+public class UsuarioService {
 	
 	@Autowired
-	private ContatoRepository repo;
+	private UsuarioRepository repo;
 	
-	public Contato find(Integer id) {
-		Optional<Contato> obj = repo.findById(id);
+	@Autowired
+	private BCryptPasswordEncoder pe;
+	
+	public Usuario find(Integer id) {
+		Optional<Usuario> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! Id: " + id));
 	}
 	
-	public List<Contato> findAll(){
+	public List<Usuario> findAll(){
 		return repo.findAll();
 	}
 	
-	public Contato insert(Contato obj) {
+	public Usuario insert(Usuario obj) {
 		obj.setId(null);
-		Contato addObj = new Contato();
+		Usuario addObj = new Usuario();
 		try {
 			addObj = repo.save(obj);
 		} catch (RejectException e) {
 			// TODO: handle exception
-			throw new RejectException("Adição de contato rejeitada! ", e);
+			throw new RejectException("Adição de Usuario rejeitada! ", e);
 		}
 		return addObj;
 	}
 	
-	public Contato update(Contato obj) {
+	public Usuario update(Usuario obj) {
 		find(obj.getId());
 		return repo.save(obj);
 	}
@@ -54,13 +58,13 @@ public class ContatoService {
 			
 		} catch (DataIntegrityException e) {
 			// TODO: handle exception
-			throw new DataIntegrityException("Não é possível excluir o Contato por integridade referencial", e);
+			throw new DataIntegrityException("Não é possível excluir o Usuario por integridade referencial", e);
 		}
 		
 	}
 	
-	public Contato fromDTO(ContatoDTO contdto) {
-		return new Contato(null, contdto.getNome(), contdto.getSexo(), contdto.getTelefone(), contdto.getEmail());
+	Usuario fromDTO(UsuarioDTO usudto) {
+		return new Usuario(usudto.getId(), usudto.getName(), usudto.getEmail(), pe.encode(usudto.getPassword()) , usudto.getPerfil());
 	}
 
 }

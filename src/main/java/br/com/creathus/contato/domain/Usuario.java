@@ -7,35 +7,40 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import br.com.creathus.contato.domain.enums.Sexo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import br.com.creathus.contato.domain.enums.Perfil;
 
 @Entity
-public class Contato implements Serializable {
+public class Usuario implements Serializable{
+	
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
-	private String nome;
-	
-	private Integer sexo;
-	
-	private String telefone;
-	
+	private String name;
 	private String email;
 	
-	public Contato() {
+	@JsonIgnore
+	private String password;
+	@SuppressWarnings("unused")
+	private Integer perfil;
+	
+	public Usuario() {
 		
 	}
-	
-	public Contato(Integer id, String nome, Sexo sexo, String telefone, String email) {
+
+	public Usuario(Integer id, String name, String email, String password, Perfil perfil) {
 		super();
 		this.id = id;
-		this.nome = nome;
-		this.sexo = (sexo == null)? Sexo.FEMININO.getCod() : sexo.getCod();
-		this.telefone = telefone;
+		this.name = name;
 		this.email = email;
+		this.password = password;
+		this.perfil = (perfil==null) ? Perfil.COLB.getId() : perfil.getId();
 	}
 
 	public Integer getId() {
@@ -46,28 +51,12 @@ public class Contato implements Serializable {
 		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getName() {
+		return name;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public Sexo getSexo() {
-		return Sexo.toEnum(sexo);
-	}
-
-	public void setSexo(Sexo sexo) {
-		this.sexo = sexo.getCod();
-	}
-
-	public String getTelefone() {
-		return telefone;
-	}
-
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getEmail() {
@@ -76,6 +65,22 @@ public class Contato implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Perfil getPerfil() {
+		return Perfil.toEnum(id);
+	}
+
+	public void setPerfil(Perfil perfil) {
+		this.perfil = perfil.getId();
 	}
 
 	@Override
@@ -94,7 +99,7 @@ public class Contato implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Contato other = (Contato) obj;
+		Usuario other = (Usuario) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
