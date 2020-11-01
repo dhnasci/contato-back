@@ -1,8 +1,14 @@
 package br.com.creathus.contato.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,11 +33,23 @@ public class Usuario implements Serializable{
 	
 	@JsonIgnore
 	private String password;
-	@SuppressWarnings("unused")
-	private Integer perfil;
+	
+	@ElementCollection(fetch=FetchType.EAGER)
+	@CollectionTable(name="PERFIS")
+	private Set<Integer> perfis = new HashSet<>();
 	
 	public Usuario() {
 		
+		perfis.add(Perfil.COLB.getId());
+		
+	}
+	
+	public Set<Perfil> getPerfis() {
+		return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
+	}
+	
+	public void addPerfil(Perfil perfil) {
+		perfis.add(perfil.getId());
 	}
 
 	public Usuario(Integer id, String name, String email, String password, Perfil perfil) {
@@ -40,7 +58,7 @@ public class Usuario implements Serializable{
 		this.name = name;
 		this.email = email;
 		this.password = password;
-		this.perfil = (perfil==null) ? Perfil.COLB.getId() : perfil.getId();
+		perfis.add(perfil.getId());
 	}
 
 	public Integer getId() {
@@ -74,15 +92,11 @@ public class Usuario implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	
 	public Perfil getPerfil() {
 		return Perfil.toEnum(id);
 	}
-
-	public void setPerfil(Perfil perfil) {
-		this.perfil = perfil.getId();
-	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

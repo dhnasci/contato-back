@@ -35,7 +35,7 @@ public class DBService {
 		
 		Usuario usu1 = new Usuario(null, "Administrador", "dhnasci@gmail.com", bcrypt.encode("admin123") , Perfil.ADM);
 		Usuario usu2 = new Usuario(null, "Financeiro", "fin@email.com", bcrypt.encode("fin123"), Perfil.FIN);
-		Usuario usu3 = new Usuario(null, "Colaborador", "colab@email.com", bcrypt.encode("colab"), null);
+		Usuario usu3 = new Usuario(null, "Colaborador", "colab@email.com", bcrypt.encode("colab"), Perfil.COLB);
 		
 		usuarioRepo.saveAll(Arrays.asList(usu1, usu2, usu3));
 		
