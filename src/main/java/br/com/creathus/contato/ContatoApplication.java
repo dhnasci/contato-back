@@ -9,13 +9,14 @@ public class ContatoApplication implements CommandLineRunner {
 	
 	
 	public static void main(String[] args) {
+		
 		SpringApplication.run(ContatoApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
-		
+		//
 		
 	}
 

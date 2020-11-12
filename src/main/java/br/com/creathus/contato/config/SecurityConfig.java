@@ -26,12 +26,31 @@ import br.com.creathus.contato.security.JWTUtil;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
+	private final static String[] PUBLIC_MATCHERS = {
+		 "/lista/**",
+		 "/contatos/**",
+		 "/usuarios/**"
+	};
+	
+	private static final String[] PUBLIC_MATCHERS_GET = {
+			"/produtos/**",
+			"/categorias/**",
+			"/estados/**",
+			"/contatos/**"
+	};
+
+	private static final String[] PUBLIC_MATCHERS_POST = {
+			"/usuarios/**",
+			"/contatos/**",
+			"/auth/forgot/**"
+	};
+	
 	@Autowired
 	private UserDetailsService userDetailsService;
 	
 	@Autowired
 	private JWTUtil jwtutil;
-	
+	/*
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// TODO Auto-generated method stub
@@ -40,7 +59,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable();
 		
 		http.authorizeRequests()
-			.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS).permitAll()
+			.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
+			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+			.antMatchers(PUBLIC_MATCHERS).permitAll()
+			.anyRequest().authenticated();
+		
+		http.addFilter(new JWTAuthenticationFilter(jwtutil, authenticationManager()));
+		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtutil, userDetailsService));
+		// não vai criar sessão de usuário
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
+	*/
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		// TODO Auto-generated method stub
+		super.configure(http);
+		
+		http.cors().and().csrf().disable();
+		
+		http.authorizeRequests()
+			.antMatchers(PUBLIC_MATCHERS).permitAll()
 			.anyRequest().authenticated();
 		
 		http.addFilter(new JWTAuthenticationFilter(jwtutil, authenticationManager()));
@@ -53,13 +91,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bcryptPasswordEncoder());
 	}
-	
-	
-
-	private final static String[] PUBLIC_MATCHERS = {
-			"/contatos/**", "/lista/**"
-	};
-	
+	/*
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
@@ -68,6 +100,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
+	*/
+	@Bean
+	  CorsConfigurationSource corsConfigurationSource() {
+	    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+	    return source;
+	  }
 	
 	@Bean
 	public BCryptPasswordEncoder bcryptPasswordEncoder() {

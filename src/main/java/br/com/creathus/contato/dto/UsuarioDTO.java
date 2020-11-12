@@ -2,6 +2,8 @@ package br.com.creathus.contato.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotEmpty;
+
 import br.com.creathus.contato.domain.enums.Perfil;
 
 public class UsuarioDTO implements Serializable {
@@ -12,9 +14,16 @@ public class UsuarioDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
+	
+	@NotEmpty(message="Nome é obrigatório")
 	private String name;
+	
+	@NotEmpty(message="Email obrigatório")
 	private String email;
+	
+	@NotEmpty(message="Senha obrigatória")
 	private String password;
+	
 	@SuppressWarnings("unused")
 	private Integer perfil;
 	
