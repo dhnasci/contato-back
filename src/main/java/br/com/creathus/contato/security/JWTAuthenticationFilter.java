@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,6 +27,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	
 	private AuthenticationManager authenticationManager;
 	
+	private Cookie cookie;
+	
 
 	public JWTAuthenticationFilter(JWTUtil jwtutil, AuthenticationManager authenticationManager) {
 		
@@ -44,6 +47,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		String username = ((UserSS) auth.getPrincipal()).getUsername();
 		String token = jwtutil.generateToken(username);
 		resp.addHeader("Authorization", "Bearer " + token);
+		Cookie cookie = new Cookie("token", token);
+		resp.addCookie(cookie);
 		
 	}
 
